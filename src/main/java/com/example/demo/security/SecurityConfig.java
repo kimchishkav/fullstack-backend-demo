@@ -51,6 +51,7 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
+        // ВАЖНО: указываем конкретный Frontend-домен
         config.setAllowedOrigins(List.of(
                 "https://fullstack-frontend-demo-delta.vercel.app"
         ));
