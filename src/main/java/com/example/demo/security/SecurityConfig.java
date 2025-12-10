@@ -29,21 +29,15 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authorizeHttpRequests(auth -> auth
-                        // доступно всем
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
-
-                        // все GET-запросы разрешены без токена
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
-
-                        // остальные методы — только авторизованным
                         .anyRequest().authenticated()
                 )
-
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(exceptionHandler));
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(exceptionHandler));
 
         return http.build();
     }
