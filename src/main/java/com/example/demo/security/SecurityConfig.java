@@ -25,16 +25,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf((csrf) -> csrf.disable())
+        http.csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
-                .sessionManagement((session) ->
+                .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((auth) ->
-                        auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
-                                .anyRequest().authenticated())
+
+                .authorizeHttpRequests(auth -> auth
+                        // доступно всем
+                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
+
+                        // все GET-запросы разрешены без токена
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+
+                        // остальные методы — только авторизованным
+                        .anyRequest().authenticated()
+                )
+
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling((exception) ->
-                        exception.authenticationEntryPoint(exceptionHandler));
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(exceptionHandler));
 
         return http.build();
     }
