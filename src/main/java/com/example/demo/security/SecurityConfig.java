@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -29,14 +29,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration c = new CorsConfiguration();
 
+                    // ВАЖНО: patterns, потому что allowCredentials=true
                     c.setAllowedOriginPatterns(List.of(
                             "http://localhost:5173",
-                            "https://fullstack-frontend-demo-delta.vercel.app",
-                            "https://fullstack-frontend-demo-git-master-kimchishkavs-projects.vercel.app"
+                            "https://*.vercel.app"
                     ));
 
                     c.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    c.setAllowedHeaders(List.of("*"));
+                    c.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+                    c.setExposedHeaders(List.of("Authorization"));
                     c.setAllowCredentials(true);
 
                     return c;
